@@ -28,7 +28,7 @@ To install all the required packages, run:
 
 ```bash
 pip install --upgrade pip setuptools wheel torch-geometric pykeen neo4j pyro-ppl
-
+```
 ## Workflow Breakdown
 
 ### 1. Load the PrimeKG Dataset
