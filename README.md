@@ -3,7 +3,7 @@
 
 This repository implements a full pipeline for building, training, and reasoning over a probabilistic biomedical knowledge graph using the PrimeKG dataset. The aim is to combine neural link prediction via DistMult with Bayesian inference in order to assign confidence scores to knowledge‑graph triples and support multi‑hop probabilistic querying. The project optionally integrates with a Neo4j graph database for storage and interactive exploration.
 
-## Project Overview
+## Project overview
 
 The core features of the pipeline are:
 
@@ -29,24 +29,24 @@ To install all the required packages, run:
 ```bash
 pip install --upgrade pip setuptools wheel torch-geometric pykeen neo4j pyro-ppl
 ```
-## Workflow Breakdown
+## Workflow breakdown
 
-### 1. Load the PrimeKG Dataset
+### 1. Load the PrimeKG dataset
 Using PyKEEN, the biomedical knowledge graph is loaded and partitioned into training, validation and test sets. A few sample triples are printed to show the structure of the data.
 
-### 2. Train the DistMult Model
+### 2. Train the DistMult model
 A DistMult embedding model is trained on a subset of the training triples using margin‑based negative sampling. The model parameters are updated with the Adam optimizer, and the training loss is printed periodically to monitor convergence.
 
-### 3. Compute Prior Probabilities
+### 3. Compute prior probabilities
 The raw DistMult scores for sampled triples are passed through the sigmoid function to produce probabilities in the range [0, 1]. These values serve as the model's initial confidence (priors) in the validity of each triple.
 
-### 4. Perform Bayesian Inference
+### 4. Perform Bayesian inference
 Each prior probability is treated as the mean of a Beta distribution. We construct a Beta–Bernoulli model where each triple has a latent probability sampled from a Beta prior, and the observed outcome is assumed to be true. MCMC sampling with NUTS is run to obtain posterior samples for each triple's probability. The means of these samples form the posterior confidence scores.
 
-### 5. Store and Visualise Posterior Estimates
+### 5. Store and visualise Posterior estimates
 The DataFrame of triples is extended with both prior and posterior confidence columns. These can be uploaded to Neo4j as relationship properties to visualise and query within a graph database.
 
-### 6. Build an In‑Memory Graph and Reason Over Paths
+### 6. Build an in‑memory graph and reason over paths
 Using the posterior scores as edge weights, we build an undirected graph and define helper functions:
 
 - `find_paths` discovers all possible paths between two nodes up to a given hop limit
@@ -55,7 +55,7 @@ Using the posterior scores as edge weights, we build an undirected graph and def
 
 This setup supports multihop biological inference such as determining how strongly two metabolic processes are connected via intermediate steps.
 
-## Example Output
+## Example output
 
 P('de novo' AMP biosynthetic process → ADSL) ≈ 0.535 via 1 path(s)
 Path (1 hop): 'de novo' AMP biosynthetic process -[bioprocess_protein] → ADSL
@@ -79,7 +79,7 @@ In general, posterior probabilities decrease as the number of hops increases. Lo
 
 - `Building_a_probabilistic_KG_DistMult_Implementation.ipynb` – The main notebook implementing the entire pipeline
 
-## How to Run
+## How to run
 
 1. Open the notebook in Google Colab or a local Jupyter environment
 2. Install the dependencies using pip (see above)
